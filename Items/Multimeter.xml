@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Items>
+  <!--
+    Multimeter: hold it, point at a device (it gets highlighted) and press the use button (LMB).
+    The readings are produced by Lua/Autorun/Multimeter.lua (needs Lua For Barotrauma on the host).
+    Without Lua the item still exists but shows nothing.
+  -->
+  <Item name="" identifier="eg_multimeter" category="Equipment" tags="smallitem,tool,multimeter"
+        maxstacksize="1" scale="0.5" impactsoundtag="impact_metal_light">
+    <PreferredContainer primary="engcab" />
+    <Price baseprice="60" />
+    <Fabricate suitablefabricators="fabricator" requiredtime="15" outcondition="1">
+      <RequiredSkill identifier="electrical" level="20" />
+      <RequiredItem identifier="plastic" amount="1" />
+      <RequiredItem identifier="copper" amount="1" />
+    </Fabricate>
+    <Deconstruct time="10">
+      <Item identifier="plastic" />
+      <Item identifier="copper" />
+    </Deconstruct>
+    <InventoryIcon texture="%ModDir%/Items/multimeter_icon.png" sourcerect="0,0,64,64" origin="0.5,0.5" />
+    <Sprite texture="%ModDir%/Items/multimeter.png" sourcerect="0,0,40,112" depth="0.55" origin="0.5,0.5" />
+    <Body width="36" height="100" density="15" />
+    <Holdable slots="Any,RightHand,LeftHand" holdpos="30,-15" handle1="0,10" holdangle="10" aimable="false"
+              msg="ItemMsgPickUpSelect" />
+  </Item>
+</Items>
