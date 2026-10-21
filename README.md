@@ -27,5 +27,13 @@ Version 0.1.0. Logic is unit-tested against a mocked game API. **Not yet tested 
 
 ```
 pip install lupa
-python tests/test_multimeter.py Lua/Autorun/Multimeter.lua mp   # or sp
+python tests/test_multimeter.py
 ```
+
+The suite asserts readings and status messages, per-character cooldowns, private multiplayer
+delivery, single-player GUI delivery, ignored calls, and recovery after a measurement error.
+It also checks that multiplayer clients do not register a duplicate measurement hook.
+These checks use Lua 5.2 with mocked game APIs; they do not replace an in-game test.
+
+To run only one mode, use `python tests/test_multimeter.py Lua/Autorun/Multimeter.lua mp`
+or replace `mp` with `sp`.
