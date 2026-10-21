@@ -13,7 +13,7 @@ In multiplayer the result is sent to the user as a chat message, in single playe
 
 ## Languages
 
-Readings and the item's name/description follow each player's game language: English, Ukrainian, German, French, Polish, Russian, Brazilian Portuguese, Castilian Spanish, Latin American Spanish, Turkish, Japanese, Korean, Simplified Chinese, Traditional Chinese. In multiplayer every player sees readings in their own client language; unsupported languages fall back to English.
+Readings and the item's name/description follow each player's game language. 14 languages supported: Brazilian Portuguese, Castilian Spanish, English, French, German, Japanese, Korean, Latin American Spanish, Polish, Russian, Simplified Chinese, Traditional Chinese, Turkish, Ukrainian. In multiplayer every player sees readings in their own client language; unsupported languages fall back to English.
 
 ## Requirements
 
@@ -22,11 +22,11 @@ Readings and the item's name/description follow each player's game language: Eng
 
 ## Install
 
-Copy this folder into `<Steam>/steamapps/common/Barotrauma/LocalMods/Multimeter` and enable it plus Lua For Barotrauma in Settings -> Mods. Spawn one with `spawnitem eg_multimeter inventory`, or craft it from plastic and copper (Electrical 20).
+Copy this folder into `<Steam>/steamapps/common/Barotrauma/LocalMods/Multimeter` and enable it plus Lua For Barotrauma in Settings -> Mods. Spawn one with `spawnitem eg_multimeter inventory`, craft it from iron (Mechanical 20, same recipe as the screwdriver), or buy it from merchants (same price and availability as the screwdriver).
 
 ## Status
 
-Version 0.2.0. Logic is unit-tested against a mocked game API. **Not yet tested in a real game.** Open questions: whether LMB still fires while a device is focused, and whether the server sees the focused item at that moment.
+Version 0.3.0. Logic is unit-tested against a mocked game API. **Not yet tested in a real game.** Open questions: whether LMB still fires while a device is focused, and whether the server sees the focused item at that moment.
 
 ## Tests
 
