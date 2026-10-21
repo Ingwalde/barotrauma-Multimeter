@@ -26,7 +26,7 @@ Copy this folder into `<Steam>/steamapps/common/Barotrauma/LocalMods/Multimeter`
 
 ## Status
 
-Version 0.3.0. Logic is unit-tested against a mocked game API. **Not yet tested in a real game.** Open questions: whether LMB still fires while a device is focused, and whether the server sees the focused item at that moment.
+Version 0.2.1. Logic is unit-tested against a mocked game API. **Not yet tested in a real game.** Open questions: whether LMB still fires while a device is focused, and whether the server sees the focused item at that moment.
 
 ## Tests
 
