@@ -39,7 +39,12 @@ def runtime(mode):
         transfer={PowerConnections={{}, {Grid={Power=5000,Load=2000}}},
             Voltage=2.5, OverloadVoltage=2, CanBeOverloaded=true, Overload=true, PowerLoad=900}
         junction=item('Junction Box',{PowerTransfer=transfer})
+        relayInput={Name='power_in',Grid={Power=5000,Load=2000,Voltage=2.5}}
+        relayOutput={Name='power_out',Grid={Power=300,Load=1000,Voltage=0.3}}
+        relayComponent={PowerConnections={relayInput,relayOutput},IsOn=true,Voltage=2.5}
+        relay=item('Relay',{RelayComponent=relayComponent,PowerTransfer=relayComponent})
         battery=item('Battery',{PowerContainer={ChargePercentage=63.4,Charge=634,Capacity=1000,
+            GetCapacity=function() return 1000 end,
             CurrPowerOutput=120,MaxOutPut=500,RechargeSpeed=25,MaxRechargeSpeed=200}})
         powered={Voltage=0.3,MinVoltage=0.5,CurrPowerConsumption=30,PowerConsumption=100}
         pump=item('Pump',{Powered=powered})
@@ -102,9 +107,45 @@ class ReadingChecks:
                 self.execute('messages={}; now=now+2; transfer.Overload=false; transfer.Voltage=voltage; use(junction)')
                 self.assertIn(expected, self.lines()[-1])
 
-    def test_non_overloadable_relay_does_not_warn(self):
+    def test_non_overloadable_transfer_does_not_warn(self):
         self.execute('transfer.CanBeOverloaded=false; use(junction)')
         self.assertEqual(self.lines()[-1], 'Статус: норма')
+
+    def test_relay_uses_output_grid_despite_powered_input(self):
+        for reverse in (False, True):
+            with self.subTest(reverse=reverse):
+                if reverse:
+                    self.execute('relayComponent.PowerConnections={relayOutput,relayInput}')
+                self.execute('messages={}; now=now+2; use(relay)')
+                lines = self.lines()
+                self.assertEqual(lines[:4], [
+                    'Мультиметр: Relay',
+                    'Подача у вихідній мережі: 300 кВт | Навантаження: 1000 кВт',
+                    'Вихідна напруга: 30%', 'Стан: 100%',
+                ])
+                self.assertIn('не вистачає живлення', lines[-1])
+
+    def test_disabled_relay_never_reports_ok_even_with_powered_output(self):
+        self.execute('relayComponent.IsOn=false; relayOutput.Grid.Voltage=1; use(relay)')
+        self.assertEqual(self.lines()[-1], 'Статус: реле вимкнене. Струм не проходить.')
+
+    def test_relay_without_output_grid_does_not_fall_back_to_input(self):
+        self.execute('relayOutput.Grid=nil; use(relay)')
+        self.assertEqual(self.lines(), [
+            'Мультиметр: Relay', 'Стан: 100%',
+            'Статус: вихід реле не підключений до електромережі.',
+        ])
+
+    def test_relay_output_statuses(self):
+        for voltage, expected in [(0, 'немає живлення'), (0.5, 'норма'), (2.5, 'норма')]:
+            with self.subTest(voltage=voltage):
+                self.lua.globals().voltage = voltage
+                self.execute('messages={}; now=now+2; relayOutput.Grid.Voltage=voltage; use(relay)')
+                self.assertIn(expected, self.lines()[-1])
+
+    def test_broken_relay_does_not_read_power_fields(self):
+        self.execute("use(item('Broken Relay',{RelayComponent={}},0))")
+        self.assertEqual(self.lines(), ['Мультиметр: Broken Relay', 'Зламано (стан 0%). Струм не проходить.'])
 
     def test_broken_junction_does_not_read_power_fields(self):
         self.execute("use(item('Broken Box',{PowerTransfer={}},0))")
@@ -124,6 +165,16 @@ class ReadingChecks:
                                     'Споживання: 30 кВт (номінал 100 кВт)', 'Стан: 100%'])
         self.assertIn('не вистачає живлення', lines[-1])
 
+    def test_battery_capacity_includes_modifiers(self):
+        self.execute('''
+            local component=battery.GetComponentString('PowerContainer')
+            component.GetCapacity=function() return 1500 end
+            component.Charge=1200
+            component.ChargePercentage=80
+            use(battery)
+        ''')
+        self.assertEqual(self.lines()[1], 'Заряд: 80% (1200 / 1500 кВт*хв)')
+
     def test_device_zero_power_and_minimum_voltage(self):
         for voltage, expected in [(0, 'немає живлення'), (0.5, 'норма')]:
             with self.subTest(voltage=voltage):
@@ -137,6 +188,7 @@ class ReadingChecks:
                 if kind=='Powered' then error('generic component must not be read') end
                 if kind=='PowerContainer' then
                     return {ChargePercentage=50,Charge=50,Capacity=100,
+                        GetCapacity=function() return 100 end,
                         CurrPowerOutput=0,MaxOutPut=10,RechargeSpeed=0,MaxRechargeSpeed=10}
                 end
             end
