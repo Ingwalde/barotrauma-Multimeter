@@ -16,6 +16,10 @@ local TEXT = {
         title = "Multimeter: %s",
         broken = "Broken (condition 0%). No power passes through.",
         supply = "Supply: %.0f kW | Load: %.0f kW",
+        relay_supply = "Output grid supply: %.0f kW | Load: %.0f kW",
+        relay_voltage = "Output voltage: %d%%",
+        relay_off = "Status: relay is off. No power passes through.",
+        relay_disconnected = "Status: relay output is not connected to a power grid.",
         voltage = "Voltage: %d%% (overload at %d%%)",
         voltage_dev = "Voltage: %d%% (needs %d%%)",
         draw = "Draw: %.0f kW (rated %.0f kW)",
@@ -34,6 +38,10 @@ local TEXT = {
         title = "Мультиметр: %s",
         broken = "Зламано (стан 0%). Струм не проходить.",
         supply = "Подача: %.0f кВт | Навантаження: %.0f кВт",
+        relay_supply = "Подача у вихідній мережі: %.0f кВт | Навантаження: %.0f кВт",
+        relay_voltage = "Вихідна напруга: %d%%",
+        relay_off = "Статус: реле вимкнене. Струм не проходить.",
+        relay_disconnected = "Статус: вихід реле не підключений до електромережі.",
         voltage = "Напруга: %d%% (перевантаження з %d%%)",
         voltage_dev = "Напруга: %d%% (потрібно %d%%)",
         draw = "Споживання: %.0f кВт (номінал %.0f кВт)",
@@ -53,9 +61,11 @@ local TEXT = {
 local function T(key) return (TEXT[LANG] or TEXT.en)[key] or TEXT.en[key] end
 local function pct(x) return math.floor((x or 0) * 100 + 0.5) end
 
-local function gridOf(powerTransfer)
+local function gridOf(powerTransfer, connectionName)
     for _, conn in pairs(powerTransfer.PowerConnections) do
-        if conn.Grid ~= nil then return conn.Grid end
+        if (connectionName == nil or conn.Name == connectionName) and conn.Grid ~= nil then
+            return conn.Grid
+        end
     end
     return nil
 end
@@ -64,10 +74,33 @@ end
 local function measure(item)
     local lines = { string.format(T("title"), item.Name) }
 
-    local pt = item.GetComponentString("PowerTransfer")
+    local relay = item.GetComponentString("RelayComponent")
+    local pt = relay or item.GetComponentString("PowerTransfer")
     if pt ~= nil then
         if item.Condition <= 0 then
             lines[#lines + 1] = T("broken")
+            return lines
+        end
+        if relay ~= nil then
+            -- Input and output are separate grids; input voltage does not describe
+            -- the devices behind a disabled or power-limited relay.
+            local grid = gridOf(relay, "power_out")
+            if grid ~= nil then
+                lines[#lines + 1] = string.format(T("relay_supply"), grid.Power, grid.Load)
+                lines[#lines + 1] = string.format(T("relay_voltage"), pct(grid.Voltage))
+            end
+            lines[#lines + 1] = string.format(T("condition"), math.floor(item.ConditionPercentage + 0.5))
+            if not relay.IsOn then
+                lines[#lines + 1] = T("relay_off")
+            elseif grid == nil then
+                lines[#lines + 1] = T("relay_disconnected")
+            elseif grid.Load > 0 and grid.Voltage <= 0.01 then
+                lines[#lines + 1] = T("nopower")
+            elseif grid.Load > 0 and grid.Voltage < 0.5 then
+                lines[#lines + 1] = T("low")
+            else
+                lines[#lines + 1] = T("ok")
+            end
             return lines
         end
         local grid = gridOf(pt)
@@ -95,7 +128,7 @@ local function measure(item)
 
     local battery = item.GetComponentString("PowerContainer")
     if battery ~= nil then
-        lines[#lines + 1] = string.format(T("charge"), math.floor(battery.ChargePercentage + 0.5), battery.Charge, battery.Capacity)
+        lines[#lines + 1] = string.format(T("charge"), math.floor(battery.ChargePercentage + 0.5), battery.Charge, battery.GetCapacity())
         lines[#lines + 1] = string.format(T("output"), battery.CurrPowerOutput, battery.MaxOutPut, battery.RechargeSpeed, battery.MaxRechargeSpeed)
         lines[#lines + 1] = string.format(T("condition"), math.floor(item.ConditionPercentage + 0.5))
         return lines

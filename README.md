@@ -4,8 +4,9 @@ Barotrauma handheld tool for electricians (item + Lua). Point at a junction box,
 
 ## Readings
 
-- **Junction boxes and relays:** grid power and load, voltage (supply/load ratio), overload threshold and whether the box is overloaded.
-- **Batteries:** charge percent, charge/capacity, output, recharge speed.
+- **Junction boxes:** grid power and load, voltage (supply/load ratio), overload threshold and whether the box is overloaded.
+- **Relays:** output grid power, load and voltage, with explicit off and disconnected-output statuses. Output grid power can include other sources connected to that grid.
+- **Batteries:** charge percent, charge/effective capacity (including modifiers), output, recharge speed.
 - **Other powered devices:** voltage, minimum voltage, current and nominal power consumption.
 
 In multiplayer the result is sent to the user as a chat message, in single player it appears as an on-screen message. Readings are throttled to once per second per character.
