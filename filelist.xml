@@ -1,5 +1,5 @@
 <?xml version='1.0' encoding='utf-8'?>
-<contentpackage name="Multimeter" modversion="0.2.0" corepackage="false" gameversion="1.13.4.0">
+<contentpackage name="Multimeter" modversion="0.2.1" corepackage="false" gameversion="1.13.4.0">
   <Item file="%ModDir%/Items/Multimeter.xml" />
   <Text file="%ModDir%/Texts/English.xml" />
   <None file="%ModDir%/Lua/Autorun/Multimeter.lua" />
