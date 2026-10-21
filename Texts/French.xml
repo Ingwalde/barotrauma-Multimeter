@@ -1,0 +1,5 @@
+<?xml version='1.0' encoding='utf-8'?>
+<infotexts language="French" nowhitespace="false" translatedname="Français">
+  <entityname.eg_multimeter>Multimètre</entityname.eg_multimeter>
+  <entitydescription.eg_multimeter>Visez un boîtier de raccordement, une batterie ou un autre appareil électrique et appuyez sur la touche d’utilisation pour lire sa tension, sa charge et sa consommation.</entitydescription.eg_multimeter>
+</infotexts>

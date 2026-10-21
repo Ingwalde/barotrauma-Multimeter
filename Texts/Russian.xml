@@ -1,0 +1,5 @@
+<?xml version='1.0' encoding='utf-8'?>
+<infotexts language="Russian" nowhitespace="false" translatedname="Русский">
+  <entityname.eg_multimeter>Мультиметр</entityname.eg_multimeter>
+  <entitydescription.eg_multimeter>Наведите на распределительную коробку, батарею или другое электрическое устройство и нажмите кнопку использования, чтобы узнать напряжение, нагрузку и потребление.</entitydescription.eg_multimeter>
+</infotexts>

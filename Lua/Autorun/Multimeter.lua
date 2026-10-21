@@ -7,58 +7,18 @@
 
 if CLIENT and Game.IsMultiplayer then return end
 
-local LANG = "uk"         -- "uk" or "en"
 local COOLDOWN = 1.0      -- seconds between readings per character
 local IDENTIFIER = "eg_multimeter"
 
-local TEXT = {
-    en = {
-        title = "Multimeter: %s",
-        broken = "Broken (condition 0%). No power passes through.",
-        supply = "Supply: %.0f kW | Load: %.0f kW",
-        relay_supply = "Output grid supply: %.0f kW | Load: %.0f kW",
-        relay_voltage = "Output voltage: %d%%",
-        relay_off = "Status: relay is off. No power passes through.",
-        relay_disconnected = "Status: relay output is not connected to a power grid.",
-        voltage = "Voltage: %d%% (overload at %d%%)",
-        voltage_dev = "Voltage: %d%% (needs %d%%)",
-        draw = "Draw: %.0f kW (rated %.0f kW)",
-        charge = "Charge: %d%% (%.0f / %.0f kW*min)",
-        output = "Output: %.0f kW (max %.0f) | Recharge: %.0f / %.0f kW",
-        condition = "Condition: %d%%",
-        ok = "Status: OK",
-        overload = "Status: OVERLOAD - the box is taking damage. Reduce reactor output or add load.",
-        near = "Status: close to overload. Lower reactor output a little.",
-        low = "Status: not enough power. Raise reactor output or switch something off.",
-        nopower = "Status: no power.",
-        notpowered = "Not an electrical device.",
-        nothing = "Point at a device first (it should be highlighted).",
-    },
-    uk = {
-        title = "Мультиметр: %s",
-        broken = "Зламано (стан 0%). Струм не проходить.",
-        supply = "Подача: %.0f кВт | Навантаження: %.0f кВт",
-        relay_supply = "Подача у вихідній мережі: %.0f кВт | Навантаження: %.0f кВт",
-        relay_voltage = "Вихідна напруга: %d%%",
-        relay_off = "Статус: реле вимкнене. Струм не проходить.",
-        relay_disconnected = "Статус: вихід реле не підключений до електромережі.",
-        voltage = "Напруга: %d%% (перевантаження з %d%%)",
-        voltage_dev = "Напруга: %d%% (потрібно %d%%)",
-        draw = "Споживання: %.0f кВт (номінал %.0f кВт)",
-        charge = "Заряд: %d%% (%.0f / %.0f кВт*хв)",
-        output = "Віддача: %.0f кВт (макс %.0f) | Зарядка: %.0f / %.0f кВт",
-        condition = "Стан: %d%%",
-        ok = "Статус: норма",
-        overload = "Статус: ПЕРЕВАНТАЖЕННЯ - коробка горить. Зменш потужність реактора або додай навантаження.",
-        near = "Статус: близько до перевантаження. Трохи зменш потужність реактора.",
-        low = "Статус: не вистачає живлення. Підніми потужність реактора або вимкни щось.",
-        nopower = "Статус: немає живлення.",
-        notpowered = "Це не електричний пристрій.",
-        nothing = "Спершу наведи на пристрій (він має підсвітитися).",
-    },
-}
+local modPath = ...
+local Strings = dofile(modPath .. "/Lua/Multimeter/Strings.lua")
+local Language = dofile(modPath .. "/Lua/Multimeter/Language.lua")
 
-local function T(key) return (TEXT[LANG] or TEXT.en)[key] or TEXT.en[key] end
+local function translator(client)
+    local messages = Strings[Language.current(client)] or Strings.en
+    return function(key) return messages[key] or Strings.en[key] end
+end
+
 local function pct(x) return math.floor((x or 0) * 100 + 0.5) end
 
 local function gridOf(powerTransfer, connectionName)
@@ -71,7 +31,7 @@ local function gridOf(powerTransfer, connectionName)
 end
 
 -- Returns a list of lines describing the target item.
-local function measure(item)
+local function measure(item, T)
     local lines = { string.format(T("title"), item.Name) }
 
     local relay = item.GetComponentString("RelayComponent")
@@ -156,17 +116,12 @@ end
 
 local COLOR = Color(120, 220, 255, 255)
 
-local function show(user, lines)
+local function show(client, lines)
     if SERVER then
-        for _, client in pairs(Client.ClientList) do
-            if client.Character == user then
-                for _, line in ipairs(lines) do
-                    local msg = ChatMessage.Create("", line, ChatMessageType.Server, nil, nil)
-                    msg.Color = COLOR
-                    Game.SendDirectChatMessage(msg, client)
-                end
-                return
-            end
+        for _, line in ipairs(lines) do
+            local msg = ChatMessage.Create("", line, ChatMessageType.Server, nil, nil)
+            msg.Color = COLOR
+            Game.SendDirectChatMessage(msg, client)
         end
     else
         GUI.AddMessage(table.concat(lines, "\n"), COLOR, 6.0)
@@ -185,15 +140,26 @@ Hook.Add("item.use", "multimeter.use", function(item, user, targetLimb, useTarge
     if lastUse[key] and now - lastUse[key] < COOLDOWN then return end
     lastUse[key] = now
 
+    local client
+    if SERVER then
+        for _, connected in pairs(Client.ClientList) do
+            if connected.Character == user then
+                client = connected
+                break
+            end
+        end
+        if client == nil then return end
+    end
+    local T = translator(client)
     local target = user.FocusedItem
     if target == nil or target == item then
-        show(user, { T("nothing") })
+        show(client, { T("nothing") })
         return
     end
 
-    local ok, result = pcall(measure, target)
+    local ok, result = pcall(measure, target, T)
     if ok then
-        show(user, result)
+        show(client, result)
     else
         print("[Multimeter] error: " .. tostring(result))
     end

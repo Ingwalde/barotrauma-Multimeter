@@ -1,6 +1,21 @@
-<?xml version="1.0" encoding="utf-8"?>
-<contentpackage name="Multimeter" modversion="0.1.0" corepackage="false" gameversion="1.13.4.0">
+<?xml version='1.0' encoding='utf-8'?>
+<contentpackage name="Multimeter" modversion="0.2.0" corepackage="false" gameversion="1.13.4.0">
   <Item file="%ModDir%/Items/Multimeter.xml" />
   <Text file="%ModDir%/Texts/English.xml" />
   <None file="%ModDir%/Lua/Autorun/Multimeter.lua" />
+  <Text file="%ModDir%/Texts/Ukrainian.xml" />
+  <Text file="%ModDir%/Texts/German.xml" />
+  <Text file="%ModDir%/Texts/French.xml" />
+  <Text file="%ModDir%/Texts/Polish.xml" />
+  <Text file="%ModDir%/Texts/Russian.xml" />
+  <Text file="%ModDir%/Texts/BrazilianPortuguese.xml" />
+  <Text file="%ModDir%/Texts/CastilianSpanish.xml" />
+  <Text file="%ModDir%/Texts/LatinamericanSpanish.xml" />
+  <Text file="%ModDir%/Texts/Turkish.xml" />
+  <Text file="%ModDir%/Texts/Japanese.xml" />
+  <Text file="%ModDir%/Texts/Korean.xml" />
+  <Text file="%ModDir%/Texts/SimplifiedChinese.xml" />
+  <Text file="%ModDir%/Texts/TraditionalChinese.xml" />
+  <None file="%ModDir%/Lua/Multimeter/Language.lua" />
+  <None file="%ModDir%/Lua/Multimeter/Strings.lua" />
 </contentpackage>

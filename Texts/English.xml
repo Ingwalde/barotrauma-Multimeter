@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version='1.0' encoding='utf-8'?>
 <infotexts language="English" nowhitespace="false" translatedname="English">
   <entityname.eg_multimeter>Multimeter</entityname.eg_multimeter>
   <entitydescription.eg_multimeter>Point at a junction box, battery or any powered device and press use to read its voltage, load and power draw.</entitydescription.eg_multimeter>

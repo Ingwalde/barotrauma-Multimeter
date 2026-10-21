@@ -11,6 +11,10 @@ Barotrauma handheld tool for electricians (item + Lua). Point at a junction box,
 
 In multiplayer the result is sent to the user as a chat message, in single player it appears as an on-screen message. Readings are throttled to once per second per character.
 
+## Languages
+
+Readings and the item's name/description follow each player's game language: English, Ukrainian, German, French, Polish, Russian, Brazilian Portuguese, Castilian Spanish, Latin American Spanish, Turkish, Japanese, Korean, Simplified Chinese, Traditional Chinese. In multiplayer every player sees readings in their own client language; unsupported languages fall back to English.
+
 ## Requirements
 
 - Barotrauma 1.13.4.0
@@ -22,7 +26,7 @@ Copy this folder into `<Steam>/steamapps/common/Barotrauma/LocalMods/Multimeter`
 
 ## Status
 
-Version 0.1.0. Logic is unit-tested against a mocked game API. **Not yet tested in a real game.** Open questions: whether LMB still fires while a device is focused, and whether the server sees the focused item at that moment.
+Version 0.2.0. Logic is unit-tested against a mocked game API. **Not yet tested in a real game.** Open questions: whether LMB still fires while a device is focused, and whether the server sees the focused item at that moment.
 
 ## Tests
 
