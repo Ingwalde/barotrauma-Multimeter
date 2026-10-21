@@ -1,0 +1,5 @@
+<?xml version='1.0' encoding='utf-8'?>
+<infotexts language="Traditional Chinese" nowhitespace="false" translatedname="中文(繁體)">
+  <entityname.eg_multimeter>萬用電表</entityname.eg_multimeter>
+  <entitydescription.eg_multimeter>指向接線盒、電池或其他電氣設備，按下使用鍵即可讀取電壓、負載和耗電量。</entitydescription.eg_multimeter>
+</infotexts>

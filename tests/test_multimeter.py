@@ -11,6 +11,7 @@ MODFILE = Path(__file__).resolve().parents[1] / 'Lua/Autorun/Multimeter.lua'
 def runtime(mode):
     lua = lua52.LuaRuntime(unpack_returned_tuples=True)
     lua.globals().MODFILE = MODFILE.as_posix()
+    lua.globals().MODROOT = MODFILE.parents[2].as_posix()
     lua.globals().MODE = mode
     lua.execute(r'''
         CLIENT = MODE ~= 'mp'; SERVER = MODE == 'mp'
@@ -18,6 +19,7 @@ def runtime(mode):
         Hook = {Add=function(event, name, fn) hooks[event]=fn end}
         Game = {
             IsMultiplayer = MODE ~= 'sp',
+            Settings = {CurrentConfig={Language={Value='Ukrainian'}}},
             SendDirectChatMessage=function(msg, client)
                 messages[#messages+1]={text=msg.text, recipient=client.Name, channel='chat'}
             end
@@ -51,12 +53,13 @@ def runtime(mode):
         crate=item('Crate',{})
         user={ID=7}
         other={ID=8}
-        Client={ClientList={{Name='Other',Character=other},{Name='Me',Character=user}}}
+        Client={ClientList={{Name='Other',Character=other,Language={Value='Ukrainian'}},
+                           {Name='Me',Character=user,Language={Value='Ukrainian'}}}}
         function use(target)
             user.FocusedItem=target
             hooks['item.use'](meter,user,nil,nil)
         end
-        loadfile(MODFILE)()
+        loadfile(MODFILE)(MODROOT)
     ''')
     return lua
 

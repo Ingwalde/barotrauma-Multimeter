@@ -1,0 +1,5 @@
+<?xml version='1.0' encoding='utf-8'?>
+<infotexts language="Turkish" nowhitespace="false" translatedname="Türkçe">
+  <entityname.eg_multimeter>Multimetre</entityname.eg_multimeter>
+  <entitydescription.eg_multimeter>Bir bağlantı kutusuna, bataryaya veya başka bir elektrikli cihaza doğrultup kullanım tuşuna basarak voltajı, yükü ve güç tüketimini ölçün.</entitydescription.eg_multimeter>
+</infotexts>
